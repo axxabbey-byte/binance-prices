@@ -2,8 +2,9 @@
 export default async function handler(req, res) {
   const tickers = ["BTCUSDT", "ETHUSDT", "XRPUSDT", "DOGEUSDT", "SOLUSDT"];
   try {
-    const url = "https://api.binance.com/api/v3/ticker/price";
-    const response = await fetch(url);
+    const response = await fetch("https://api.binance.com/api/v3/ticker/price", {
+      cache: "no-store"  // важно для Vercel, чтобы не кэшировалось
+    });
     const data = await response.json();
 
     const now = new Date().toISOString().replace("T", " ").split(".")[0];
@@ -17,6 +18,6 @@ export default async function handler(req, res) {
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.status(200).send(rows);
   } catch (err) {
-    res.status(500).send("Error fetching Binance prices");
+    res.status(500).send("Error fetching Binance prices: " + err.message);
   }
 }
